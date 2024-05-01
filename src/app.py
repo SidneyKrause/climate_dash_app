@@ -1590,6 +1590,7 @@ app.layout = html.Div(
                 )
             ]
         ),
+        dcc.Store(id='current-index', data=0),
         html.H2('8. Fazit',
                 style={'font-family': 'Arial, sans-serif', 'margin-bottom': '10px'}),
         dcc.Markdown(
@@ -2039,35 +2040,36 @@ def update_emission_chart(selected_emission, selected_country, selected_years, r
     return fig_g6, selected_years
 
 
-# 6. Callback to update content on button clicks
+# Callback to update content on button clicks
 @app.callback(
     Output("info-container-g7", "children"),
     Output("picture-container-g7", "style"),
     Output("graph-container-g7", "figure"),
     Output("header-g7", "children"),
+    Output("current-index", "data"),
     Input("previous-button-g7", "n_clicks"),
     Input("next-button-g7", "n_clicks"),
-    State("previous-button-g7", "n_clicks"),
-    State("next-button-g7", "n_clicks"),
+    State("current-index", "data")
 )
-def update_content(prev_clicks, next_clicks, prev_btn_count, next_btn_count):
+def update_content(prev_clicks, next_clicks, current_index):
 
-    global site_switch
+    # Initialize current_index to 0 if not set
+    current_index = current_index or 0
 
     triggered_id = callback_context.triggered[0]["prop_id"].split(".")[0]
 
     # If triggered by previous button
-    if triggered_id == "previous-button-g7" and site_switch == 0:
-        site_switch = 4
-    elif triggered_id == "previous-button-g7" and site_switch != 0:
-        site_switch -= 1
+    if triggered_id == "previous-button-g7" and current_index == 0:
+        current_index = 4
+    elif triggered_id == "previous-button-g7" and current_index != 0:
+        current_index -= 1
     # If triggered by next button
-    elif triggered_id == "next-button-g7" and site_switch == 4:
-        site_switch = 1
-    else:
-        site_switch += 1
+    elif triggered_id == "next-button-g7" and current_index == 4:
+        current_index = 1
+    elif triggered_id == "next-button-g7" and current_index != 4:
+        current_index += 1
 
-    content = content_sets[site_switch - 1]
+    content = content_sets[current_index - 1]
 
     info_content = html.P(content["info"], style=styles['graph'])
     picture_style = {
@@ -2083,7 +2085,7 @@ def update_content(prev_clicks, next_clicks, prev_btn_count, next_btn_count):
     }
     header_content = html.P(content["header"], style={**styles['graph'], 'margin-top': '0px', 'margin-bottom': '0px'})
 
-    return info_content, picture_style, graph_content, header_content
+    return info_content, picture_style, graph_content, header_content, current_index
 
 
 
