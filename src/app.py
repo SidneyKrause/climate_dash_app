@@ -2060,16 +2060,16 @@ def update_content(prev_clicks, next_clicks, current_index):
 
     # If triggered by previous button
     if triggered_id == "previous-button-g7" and current_index == 0:
-        current_index = 4
+        current_index = 3
     elif triggered_id == "previous-button-g7" and current_index != 0:
         current_index -= 1
     # If triggered by next button
-    elif triggered_id == "next-button-g7" and current_index == 4:
-        current_index = 1
-    elif triggered_id == "next-button-g7" and current_index != 4:
+    elif triggered_id == "next-button-g7" and current_index == 3:
+        current_index = 0
+    elif triggered_id == "next-button-g7" and current_index != 3:
         current_index += 1
 
-    content = content_sets[current_index - 1]
+    content = content_sets[current_index]
 
     info_content = html.P(content["info"], style=styles['graph'])
     picture_style = {
